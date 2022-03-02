@@ -1,0 +1,22 @@
+name: Build Release
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: macos-11
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: submodules-init
+        uses: snickerbockers/submodules-init@v4
+      - name: Build
+        run: |
+          mkdir -p build
+          xcodebuild clean build ONLY_ACTIVE_ARCH=NO PRODUCT_BUNDLE_IDENTIFIER='com.rileytestut.Delta.Beta' CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED="NO" -sdk iphoneos -scheme Delta -configuration Release -derivedDataPath build
+          ln -sf build/Build/Products/Release-iphoneos Payload
+          zip -r9 Delta.ipa Payload/Delta.app
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+         name: Delta.ipa
+         path: "Delta.ipa"
