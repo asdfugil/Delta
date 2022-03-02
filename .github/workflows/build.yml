@@ -7,6 +7,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Fix submodules
+        run: sed -i '' -e 's|git@github.com:|https://github.com/|' .gitmodules
       - name: submodules-init
         uses: snickerbockers/submodules-init@v4
       - name: Build
