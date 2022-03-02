@@ -13,6 +13,8 @@ jobs:
         uses: snickerbockers/submodules-init@v4
       - name: Deal with Apple-isms
         run: |
+          # unlock keychain
+          sudo security authorizationdb write com.apple.trust-settings.admin allow 
           # prepare temporary keychain
           export MY_KEYCHAIN="temp.keychain"
           export MY_KEYCHAIN_PASSWORD="secret"
@@ -31,6 +33,10 @@ jobs:
             sudo security add-trusted-cert -d -r trustRoot -p codeSign -k "$MY_KEYCHAIN" "$f"
           done
           security set-key-partition-list -S apple-tool:,apple: -k "$MY_KEYCHAIN_PASSWORD" "$MY_KEYCHAIN"
+      - name Launchctl unload
+        run: |
+          launchctl unload /System/Library/LaunchDaemons/com.apple.loginwindow.plist;
+          launchctl unload /System/Library/LaunchDaemons/com.apple.WindowServer.plist;
       - name: Build
         run: |
           mkdir -p build
