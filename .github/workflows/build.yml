@@ -33,7 +33,7 @@ jobs:
             sudo security add-trusted-cert -d -r trustRoot -p codeSign -k "$MY_KEYCHAIN" "$f"
           done
           security set-key-partition-list -S apple-tool:,apple: -k "$MY_KEYCHAIN_PASSWORD" "$MY_KEYCHAIN"
-          sed -i '' -e 's/6XVY5G3U44/rileytestut' $(grep -rI '6XVY5G3U44' . | cut -d: -f1)
+          sed -i '' -e 's/6XVY5G3U44/rileytestut/g' $(grep -rI '6XVY5G3U44' . | cut -d: -f1)
       - name: Build
         run: |
           mkdir -p build
