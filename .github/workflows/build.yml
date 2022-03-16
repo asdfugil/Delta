@@ -33,11 +33,13 @@ jobs:
             sudo security add-trusted-cert -d -r trustRoot -p codeSign -k "$MY_KEYCHAIN" "$f"
           done
           security set-key-partition-list -S apple-tool:,apple: -k "$MY_KEYCHAIN_PASSWORD" "$MY_KEYCHAIN"
-          sed -i '' -e 's/6XVY5G3U44/-/g' $(grep -rI '6XVY5G3U44' . | cut -d: -f1)
+          # sed -i '' -e 's/6XVY5G3U44/-/g' $(grep -rI '6XVY5G3U44' . | cut -d: -f1)
       - name: Build
         run: |
-          mkdir -p build
-          xcodebuild clean build ONLY_ACTIVE_ARCH=NO PRODUCT_BUNDLE_IDENTIFIER='com.rileytestut.Delta.Beta' CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED="NO" -sdk iphoneos -scheme Delta -configuration Release -derivedDataPath build DEVELOPMENT_TEAM=rileytestut
+          mkdir -p build ~/.local/bin
+          ln -s /usr/bin/true ~/.local/bin/security
+          ln -s /usr/bin/true ~/.local/bin/codesign
+          PATH=${HOME}/.local/bin:$PATH xcodebuild clean build ONLY_ACTIVE_ARCH=NO PRODUCT_BUNDLE_IDENTIFIER='com.rileytestut.Delta.Beta' CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED="NO" -sdk iphoneos -scheme Delta -configuration Release -derivedDataPath build DEVELOPMENT_TEAM=rileytestut
           ln -sf build/Build/Products/Release-iphoneos Payload
           zip -r9 Delta.ipa Payload/Delta.app
       - name: Upload a Build Artifact
