@@ -37,8 +37,9 @@ jobs:
       - name: Build
         run: |
           mkdir -p build ~/.local/bin
-          ln -s /usr/bin/true ~/.local/bin/security
-          ln -s /usr/bin/true ~/.local/bin/codesign
+          xcode-select -print-path
+          sudo ln -s /usr/bin/true $(xcode-select -print-path)/usr/bin/security
+          sudo ln -s /usr/bin/true $(xcode-select -print-path)/usr/bin/codesign
           PATH=${HOME}/.local/bin:$PATH xcodebuild clean build ONLY_ACTIVE_ARCH=NO PRODUCT_BUNDLE_IDENTIFIER='com.rileytestut.Delta.Beta' CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED="NO" -sdk iphoneos -scheme Delta -configuration Release -derivedDataPath build DEVELOPMENT_TEAM=rileytestut
           ln -sf build/Build/Products/Release-iphoneos Payload
           zip -r9 Delta.ipa Payload/Delta.app
